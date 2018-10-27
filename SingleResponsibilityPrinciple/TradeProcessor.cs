@@ -114,7 +114,8 @@ namespace SingleResponsibilityPrinciple
             //    The @ sign allows for back slashes
             //    Watch for double quotes which must be escaped using "" 
             //    Watch for extra spaces after C: and avoid paths with - hyphens -
-            using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rplatt\source\repos\cis-3285-asg-8-rplatt21\tradedatabase.mdf;Integrated Security=True;Connect Timeout=30;"))
+            using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\moose21\tradedatabase.mdf;Integrated Security=True;Connect Timeout=30;"))
+           // using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rplatt\source\repos\cis-3285-asg-8-rplatt21\tradedatabase.mdf;Integrated Security=True;Connect Timeout=30;"))
             //using (var connection = new System.Data.SqlClient.SqlConnection("Data Source=(local);Initial Catalog=tradedatabase;Integrated Security=True;"))
             {
                 connection.Open();

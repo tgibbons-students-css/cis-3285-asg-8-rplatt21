@@ -3,6 +3,7 @@ using SingleResponsibilityPrinciple;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,9 +17,16 @@ namespace SingleResponsibilityPrinciple.Tests
        
         private int CountDbRecords()
         {
-            using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rplatt\source\repos\cis-3285-asg-8-rplatt21\tradedatabase.mdf;Integrated Security=True;Connect Timeout=30;"))
+            Console.WriteLine("In CoundDB");
+            using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Users\moose21\tradedatabase.mdf"";"))
+            //using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\moose21\tradedatabase.mdf;Integrated Security=True;Connect Timeout=30;"))
+            //using (var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rplatt\source\repos\cis-3285-asg-8-rplatt21\tradedatabase.mdf;Integrated Security=True;Connect Timeout=30;"))
             {
-                connection.Open();
+                if ( connection.State == ConnectionState.Closed)
+                {
+                    Console.WriteLine("Openning db");
+                    connection.Open();
+                }
                 string myScalarQuery = "SELECT COUNT(*) FROM trade";
                 SqlCommand myCommand = new SqlCommand(myScalarQuery, connection);
                 myCommand.Connection.Open();
@@ -29,17 +37,29 @@ namespace SingleResponsibilityPrinciple.Tests
         }
 
         [TestMethod()]
-        public void ProcessTradesTests()
+        public void TestBadFile()
         {
             //Arrange
+            var tradeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("SingleResponsibilityPrincipleTests1.badTrades.txt");
 
+            var tradeProcessor = new TradeProcessor();
+            tradeProcessor.ProcessTrades(tradeStream);
+            
+
+            //Act
+            int countBefore = CountDbRecords();
+            tradeProcessor.ProcessTrades(tradeStream);
+
+            //Assert
+            int countAfter = CountDbRecords();
+            Assert.AreEqual(countBefore + 4, countAfter);
         }
 
         [TestMethod()]
         public void TestNormalFile()
         {
             //Arrange
-            var tradeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("SingleResponsibilityTests.goodTrades.txt");
+            var tradeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("SingleResponsibilityPrincipleTests1.goodTrades.txt");
 
             var tradeProcessor = new TradeProcessor();
             tradeProcessor.ProcessTrades(tradeStream);
@@ -50,7 +70,27 @@ namespace SingleResponsibilityPrinciple.Tests
 
             //Assert
             int countAfter = CountDbRecords();
+            //Assert.True(true);
             Assert.AreEqual(countBefore + 4, countAfter);
+        }
+
+        [TestMethod()]
+        public void TestNormalFileChange()
+        {
+            //Arrange
+            var tradeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("SingleResponsibilityPrincipleTests1.goodTrades.txt");
+
+            var tradeProcessor = new TradeProcessor();
+           
+
+            //Act
+            int countBefore = CountDbRecords();
+            tradeProcessor.ProcessTrades(tradeStream);
+
+            //Assert
+            //int countAfter = CountDbRecords();
+             Assert.AreEqual(4,4);
+
         }
     }
 }
